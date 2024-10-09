@@ -69,6 +69,7 @@ function performUnitOfWork(fiber) {
     if (nextFiber.sibling) {
       return nextFiber.sibling
     }
+    // 向上回溯
     nextFiber = nextFiber.parent
   }
   
@@ -83,16 +84,43 @@ function performUnitOfWork(fiber) {
  * @param {Fiber} nextUnitOfWork 下一个工作单元
  * @returns {function} 一个函数，接受一个参数deadline
  */
-function workLoop(nextUnitOfWork) {
+function workLoop(nextUnitOfWork, rootFiber) {
   return (deadline) => {
       let shouldYield = false
       while (nextUnitOfWork && !shouldYield) {
         nextUnitOfWork = performUnitOfWork(nextUnitOfWork)
         shouldYield = deadline.timeRemaining() < 1
+        console.log("🚀 ~ return ~ deadline.timeRemaining():", deadline.timeRemaining())
       }
 
-      requestIdleCallback(workLoop(nextUnitOfWork))
+      // 构造完成fiber时，调用commitRoot函数，将rootFiber的真实dom添加到父节点中
+      // 1. rootFiber存在，说明rootFiber未commit
+      // 2. nextUnitOfWork不存在，说明已经向上查回溯到了rootFiber，说明render已结束
+      if (rootFiber && !nextUnitOfWork) {
+        commitRoot(rootFiber)
+      }
+      requestIdleCallback(workLoop(nextUnitOfWork, rootFiber))
     }
+}
+
+
+
+function commitRoot(rootFiber) {
+  commitWork(rootFiber.child)
+  rootFiber = null
+}
+
+function commitWork(fiber) {
+  if(!fiber) {
+    return 
+  }
+  // 拿到父容器的dom，将fiber的真实dom添加到父容器中
+  const container = fiber.parent.dom
+  container.appendChild(fiber.dom)
+  // 处理子fiber
+  commitWork(fiber.child)
+  // 处理兄弟fiber
+  commitWork(fiber.sibling)
 }
 
 
@@ -100,8 +128,8 @@ function workLoop(nextUnitOfWork) {
 
 
 
-export function startWorkLoop(nextUnitOfWork) {
+export function startWorkLoop(nextUnitOfWork, rootFiber) {
   // 开始执行工作循环
-  requestIdleCallback(workLoop(nextUnitOfWork))
+  requestIdleCallback(workLoop(nextUnitOfWork, rootFiber))
 }
 

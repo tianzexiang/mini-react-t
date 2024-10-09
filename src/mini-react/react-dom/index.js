@@ -4,6 +4,7 @@ import { startWorkLoop } from '../react-reconciler'
 
 function createRoot(container) {
   let nextUnitOfWork = null
+  let rootFiber = null
   // 返回一个对象，包含render方法
   return {
     render(element) {
@@ -32,14 +33,16 @@ function createRoot(container) {
 
       // --------------------------------------------
       // root fiber
-      nextUnitOfWork = new Fiber({
+      rootFiber = new Fiber({
         dom: container,
         props:{
           children: [element]
         },
       })
 
-      startWorkLoop(nextUnitOfWork)
+      nextUnitOfWork = rootFiber
+
+      startWorkLoop(nextUnitOfWork, rootFiber)
       // --------------------------------------------
     }
   }

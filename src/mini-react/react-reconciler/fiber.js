@@ -44,8 +44,15 @@ export default class Fiber {
   }
 
   updateDom(prevProps = this.alternate?.props || {}, nextProps = this.props) {
-    
     if (!this.dom) return
+    // 移除旧的属性
+    Object.keys(prevProps).filter(isProperty).filter(isGone(nextProps)).forEach(name => {
+      this.dom[name] = ''
+    })
+    // 添加新的或变化了的属性
+    Object.keys(nextProps).filter(isProperty).filter(isNew(prevProps, nextProps)).forEach(name => {
+      this.dom[name] = nextProps[name]
+    })
     // 移除旧的或变化了的event
     Object.keys(prevProps).filter(isEvent).filter(key =>
       isGone(nextProps)(key) || isNew(prevProps, nextProps)(key)
@@ -53,17 +60,6 @@ export default class Fiber {
       const eventType = name.toLowerCase().substring(2)
       this.dom.removeEventListener(eventType, prevProps[name])
     })
-  
-    // 移除旧的属性
-    Object.keys(prevProps).filter(isProperty).filter(isGone(nextProps)).forEach(name => {
-      this.dom[name] = ''
-    })
-    console.log("🚀 ~ Fiber ~ updateDom ~ updateDom:", prevProps, nextProps)
-    // 添加新的或变化了的属性
-    Object.keys(nextProps).filter(isProperty).filter(isNew(prevProps, nextProps)).forEach(name => {
-      this.dom[name] = nextProps[name]
-    })
-  
     // 添加新的event
     Object.keys(nextProps).filter(isEvent).filter(isNew(prevProps, nextProps)).forEach(name => {
       const eventType = name.toLowerCase().substring(2)

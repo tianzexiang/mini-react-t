@@ -1,9 +1,10 @@
 // import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
+import { Demo } from './App.jsx'
 import './index.css'
 import { createRoot } from './mini-react/react-dom/index.js' 
 
-createRoot(document.getElementById('root')).render(App())
+const root = createRoot(document.getElementById('root'))
+root.render(Demo('test', root))
 
 
 

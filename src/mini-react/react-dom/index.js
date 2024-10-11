@@ -1,10 +1,8 @@
 import { VDOM_TYPE } from '../constants'
 import Fiber from '../react-reconciler/fiber'
-import { startWorkLoop } from '../react-reconciler'
+import Reconciler from '../react-reconciler'
 
 function createRoot(container) {
-  let nextUnitOfWork = null
-  let rootFiber = null
   // 返回一个对象，包含render方法
   return {
     render(element) {
@@ -33,16 +31,15 @@ function createRoot(container) {
 
       // --------------------------------------------
       // root fiber
-      rootFiber = new Fiber({
+      const wipFiber = new Fiber({
         dom: container,
         props:{
           children: [element]
         },
+        alternate: Reconciler.currentRoot
       })
 
-      nextUnitOfWork = rootFiber
-
-      startWorkLoop(nextUnitOfWork, rootFiber)
+      Reconciler.startWorkLoop(wipFiber)
       // --------------------------------------------
     }
   }
@@ -74,6 +71,6 @@ function createTextElement(text) {
 
 export {
   createRoot,
-  createElement
+  createElement,
 }
 

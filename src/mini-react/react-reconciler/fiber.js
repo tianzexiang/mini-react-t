@@ -30,9 +30,16 @@ export default class Fiber {
     this.createDom()
   }
 
-  createDom() {
-    if (this.dom) return
+  get isFunctionComponent() {
+    return this.type instanceof Function
+  }
 
+  getChildren() {
+    return this.isFunctionComponent ? [this.type(this.props)] : this.props.children
+  }
+
+  createDom() {
+    if (this.dom || this.isFunctionComponent) return
     // 根据element的type创建dom节点
     this.dom = this.type === VDOM_TYPE.TEXT_ELEMENT ? document.createTextNode('') : document.createElement(this.type)
     // 将element的props添加到dom节点上

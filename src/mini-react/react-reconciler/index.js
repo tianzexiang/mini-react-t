@@ -6,7 +6,7 @@ import Committer from './commit'
 class Reconciler {
   constructor() {
     this.nextUnitOfWork = null
-    this.wipFiber = null
+    this.wipRoot = null
     this.currentRoot = null
     this.deletions = []
     this.committer = new Committer(this)
@@ -18,12 +18,12 @@ class Reconciler {
  * 1. 根据虚拟dom创建子fiber
  * 2. 根据规则判断fiber节点是新增还是更新还是删除
  * 3. 完成父子兄的连接
- * @param {*} element
- * @param {*} wipFiber
+ * @param {*} elements
+ * @param {*} fiber
  */
-  reconcileChildren(elements, wipFiber) {
+  reconcileChildren(elements, fiber) {
     let index = 0
-    let oldFiber = wipFiber.alternate && wipFiber.alternate.child
+    let oldFiber = fiber.alternate && fiber.alternate.child
     let preSibling = null
     // 遍历elements和oldFiber，比较是否需要更新
     // 为什么使用两个判断条件？两者可能因为增加和删除导致长度不一致
@@ -45,7 +45,7 @@ class Reconciler {
           type: oldFiber.type,
           props: element.props,
           dom: oldFiber.dom,
-          parent: wipFiber,
+          parent: fiber,
           alternate: oldFiber,
           effectTag: EFFECT_TAG.UPDATE
         })
@@ -57,7 +57,7 @@ class Reconciler {
           type: element.type,
           props: element.props,
           dom: null,
-          parent: wipFiber,
+          parent: fiber,
           alternate: null,
           effectTag: EFFECT_TAG.PLACEMENT
         })
@@ -72,7 +72,7 @@ class Reconciler {
   
       if (index === 0) {
         // 第一个子fiber，直接设置为fiber的child
-        wipFiber.child = newFiber
+        fiber.child = newFiber
       } else {
         // 如果不是第一个子fiber，则只需要关注它的兄弟fiber即可，因为一次遍历只处理同层级的兄弟fiber
         preSibling.sibling = newFiber
@@ -126,7 +126,8 @@ class Reconciler {
     //   // 更新兄弟fiber
     //   preSibling = childFiber
     // })
-    this.reconcileChildren(fiber.props.children, fiber)
+    const elements = fiber.getChildren()
+    this.reconcileChildren(elements, fiber)
   
     // 如果存在子fiber(下一个工作单元)，则直接返回
     if (fiber.child) {
@@ -159,18 +160,19 @@ class Reconciler {
       shouldYield = deadline.timeRemaining() < 1
     }
 
-    // 构造完成fiber时，调用commitRoot函数，将wipFiber的真实dom添加到父节点中
-    // 1. wipFiber存在，说明wipFiber未commit
-    // 2. nextUnitOfWork不存在，说明已经向上查回溯到了wipFiber，说明render已结束
-    if (this.wipFiber && !this.nextUnitOfWork) {
+    // 构造完成fiber时，调用commitRoot函数，将wipRoot的真实dom添加到父节点中
+    // 1. wipRoot存在，说明wipRoot未commit
+    // 2. nextUnitOfWork不存在，说明已经向上查回溯到了wipRoot，说明render已结束
+    if (this.wipRoot && !this.nextUnitOfWork) {
       this.committer.commitRoot()
     }
     requestIdleCallback(this.workLoop.bind(this))
   }
 
-  startWorkLoop(wipFiber) {
-    this.wipFiber = wipFiber
-    this.nextUnitOfWork = wipFiber
+  startWorkLoop(wipRoot) {
+    this.wipRoot = wipRoot
+    this.nextUnitOfWork = wipRoot
+    this.deletions = []
     requestIdleCallback(this.workLoop.bind(this))
   }
 }

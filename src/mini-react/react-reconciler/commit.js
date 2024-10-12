@@ -15,9 +15,9 @@ class Committer {
       * 5. 动画和过渡效果：在某些情况下，先删除元素可以让离开动画更自然地执行，而不会被新元素的进入动画干扰。
       */
     this.reconciler.deletions.forEach(this.commitWork)
-    this.commitWork(this.reconciler.wipFiber.child)
+    this.commitWork(this.reconciler.wipRoot.child)
     // commit阶段，更新currentRoot为wipFiber
-    this.reconciler.currentRoot = this.reconciler.wipFiber
+    this.reconciler.currentRoot = this.reconciler.wipRoot
     this.reconciler.wipFiber = null
   }
 
@@ -26,14 +26,18 @@ class Committer {
       return 
     }
     // 拿到父容器的dom，将fiber的真实dom添加到父容器中
-    const container = fiber.parent.dom
-    // container.appendChild(fiber.dom)
+    // 如果fiber没有dom(函数组件fiber相当于在当前有dom的fiber又向外套了一层)，则向上回溯，直到找到有dom的fiber
+    let domParentFiber = fiber.parent
+    while (!domParentFiber.dom) {
+      domParentFiber = domParentFiber.parent
+    }
+    const domParent = domParentFiber.dom
     if (fiber.effectTag === EFFECT_TAG.PLACEMENT && fiber.dom !== null) {
-      container.appendChild(fiber.dom)
+      domParent.appendChild(fiber.dom)
     } else if (fiber.effectTag === EFFECT_TAG.UPDATE && fiber.dom !== null) {
       fiber.updateDom()
     } else if (fiber.effectTag === EFFECT_TAG.DELETION) {
-      container.removeChild(fiber.dom)
+      this.commitDeletion(fiber, domParent)
     }
     
     // 处理子fiber
@@ -42,6 +46,12 @@ class Committer {
     this.commitWork(fiber.sibling)
   }
 
+  commitDeletion(fiber, domParent) {
+    if (fiber.dom) {
+      domParent.removeChild(fiber.dom)
+    }
+    this.commitDeletion(fiber.child, domParent)
+  }
 }
 
 export default Committer

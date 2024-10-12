@@ -1,10 +1,10 @@
 // import { createRoot } from 'react-dom/client'
-import { Demo } from './App.jsx'
+import App from './App.jsx'
 import './index.css'
-import { createRoot } from './mini-react/react-dom/index.js' 
+import { createRoot, createElement } from './mini-react/react-dom/index.js' 
 
-const root = createRoot(document.getElementById('root'))
-root.render(Demo('test', root))
+const renderer = createRoot(document.getElementById('root'))
+renderer.render(createElement(App, { text: 'Hello, World!' }))
 
 
 

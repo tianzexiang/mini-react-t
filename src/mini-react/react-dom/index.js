@@ -31,7 +31,7 @@ function createRoot(container) {
 
       // --------------------------------------------
       // root fiber
-      const wipFiber = new Fiber({
+      const wipRoot = new Fiber({
         dom: container,
         props:{
           children: [element]
@@ -39,7 +39,7 @@ function createRoot(container) {
         alternate: Reconciler.currentRoot
       })
 
-      Reconciler.startWorkLoop(wipFiber)
+      Reconciler.startWorkLoop(wipRoot)
       // --------------------------------------------
     }
   }

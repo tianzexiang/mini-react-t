@@ -90,7 +90,7 @@ class Reconciler {
 
   /**
    * @description: 这个函数主要完成以下几个工作
-   * 1. 依据fiber创建真实dom并添加到父节点下
+   * 1. 依依据fiber创建真实dom并关联到当前fiber
    * 2. 根据虚拟dom创建子fiber并完成父子兄的连接（reconcileChildren）
    * 3. 处理完当前fiber查找是否有子fiber需要处理，有则返回
    * 4. 若没有子fiber需要处理则返回兄弟fiber

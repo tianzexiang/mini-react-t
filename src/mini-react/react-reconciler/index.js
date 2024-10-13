@@ -1,15 +1,17 @@
 import Fiber from './fiber'
 import { EFFECT_TAG } from '../constants'
 import Committer from './commit'
-
+import Hook from './hook'
 
 class Reconciler {
   constructor() {
     this.nextUnitOfWork = null
     this.wipRoot = null
+    this.wipFiber = null
     this.currentRoot = null
     this.deletions = []
     this.committer = new Committer(this)
+    this.hook = new Hook(this)
   }
 
   /**
@@ -126,6 +128,7 @@ class Reconciler {
     //   // 更新兄弟fiber
     //   preSibling = childFiber
     // })
+    this.wipFiber = fiber
     const elements = fiber.getChildren()
     this.reconcileChildren(elements, fiber)
   
@@ -169,10 +172,14 @@ class Reconciler {
     requestIdleCallback(this.workLoop.bind(this))
   }
 
+  scheduleWork(fiber) {
+    this.nextUnitOfWork = fiber
+    this.deletions = []
+  }
+
   startWorkLoop(wipRoot) {
     this.wipRoot = wipRoot
-    this.nextUnitOfWork = wipRoot
-    this.deletions = []
+    this.scheduleWork(wipRoot)
     requestIdleCallback(this.workLoop.bind(this))
   }
 }

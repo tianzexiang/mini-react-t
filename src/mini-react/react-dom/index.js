@@ -69,6 +69,9 @@ function createTextElement(text) {
   }
 }
 
+
+export const useState = Reconciler.hook.useState
+
 export {
   createRoot,
   createElement,

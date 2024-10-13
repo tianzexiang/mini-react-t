@@ -27,6 +27,7 @@ export default class Fiber {
     this.alternate = alternate
     this.effectTag = effectTag
 
+    this.updateFunctionComponent()
     this.createDom()
   }
 
@@ -36,6 +37,13 @@ export default class Fiber {
 
   getChildren() {
     return this.isFunctionComponent ? [this.type(this.props)] : this.props.children
+  }
+
+  updateFunctionComponent() {
+    if (this.isFunctionComponent) {
+      this.hooks = []
+      this.hooksIndex = 0
+    }
   }
 
   createDom() {

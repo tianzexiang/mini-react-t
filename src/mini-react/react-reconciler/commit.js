@@ -18,6 +18,7 @@ class Committer {
     this.commitWork(this.reconciler.wipRoot.child)
     // commit阶段，更新currentRoot为wipFiber
     this.reconciler.currentRoot = this.reconciler.wipRoot
+    this.reconciler.wipRoot = null
     this.reconciler.wipFiber = null
   }
 

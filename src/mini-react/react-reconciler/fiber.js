@@ -41,6 +41,7 @@ export default class Fiber {
 
   updateFunctionComponent() {
     if (this.isFunctionComponent) {
+      // hook的结构如下： { state, queue }
       this.hooks = []
       this.hooksIndex = 0
     }

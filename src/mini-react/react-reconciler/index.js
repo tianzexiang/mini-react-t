@@ -7,7 +7,6 @@ class Reconciler {
   constructor() {
     this.nextUnitOfWork = null
     this.wipRoot = null
-    this.wipFiber = null
     this.currentRoot = null
     this.deletions = []
     this.committer = new Committer(this)
@@ -128,7 +127,6 @@ class Reconciler {
     //   // 更新兄弟fiber
     //   preSibling = childFiber
     // })
-    this.wipFiber = fiber
     const elements = fiber.getChildren()
     this.reconcileChildren(elements, fiber)
   
@@ -159,6 +157,7 @@ class Reconciler {
   workLoop(deadline) {
     let shouldYield = false
     while (this.nextUnitOfWork && !shouldYield) {
+      console.log("🚀 ~ Reconciler ~ workLoop ~ nextUnitOfWork:", this.nextUnitOfWork)
       this.nextUnitOfWork = this.performUnitOfWork(this.nextUnitOfWork)
       shouldYield = deadline.timeRemaining() < 1
     }
@@ -166,19 +165,19 @@ class Reconciler {
     // 构造完成fiber时，调用commitRoot函数，将wipRoot的真实dom添加到父节点中
     // 1. wipRoot存在，说明wipRoot未commit
     // 2. nextUnitOfWork不存在，说明已经向上查回溯到了wipRoot，说明render已结束
-    if (this.wipRoot && !this.nextUnitOfWork) {
+    if (this.wipRoot && !this.nextUnitOfWork) { 
       this.committer.commitRoot()
     }
     requestIdleCallback(this.workLoop.bind(this))
   }
 
   scheduleWork(fiber) {
+    this.wipRoot = fiber
     this.nextUnitOfWork = fiber
     this.deletions = []
   }
 
   startWorkLoop(wipRoot) {
-    this.wipRoot = wipRoot
     this.scheduleWork(wipRoot)
     requestIdleCallback(this.workLoop.bind(this))
   }

@@ -1,6 +1,6 @@
-import { createElement, useState } from "./mini-react/react-dom"
+import { createElement, useState } from "./react-dom"
 
-export default function App(props) {
+function App(props) {
  
   // return createElement('div', null, props.text)
   const [count, setCount] = useState(0)
@@ -12,3 +12,5 @@ export default function App(props) {
     onClick: handleClick
   }, createElement('h1', null, 'count: ', `${count}`))
 }
+
+export default createElement(App, null)

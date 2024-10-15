@@ -1,8 +1,14 @@
-# React + Vite
+# mini-react
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 目录
 
-Currently, two official plugins are available:
+- [mini-react/1](./src/mini-react/1)
+- [mini-react/2](./src/mini-react/2)
+- [mini-react/3](./src/mini-react/3)
+- [mini-react/4](./src/mini-react/4)
+- [mini-react/5](./src/mini-react/5)
+- [mini-react/6](./src/mini-react/6)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 文档
+
+[mini-react 文档](https://www.kdocs.cn/l/cf3Ua40wCk32)

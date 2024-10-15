@@ -28,7 +28,6 @@ class Committer {
     // 拿到父容器的dom，将fiber的真实dom添加到父容器中
     // 如果fiber没有dom(函数组件fiber相当于在当前有dom的fiber又向外套了一层)，则向上回溯，直到找到有dom的fiber
     let domParentFiber = fiber.parent
-    console.log("🚀 ~ Committer ~ commitWork ~ fiber.parent:", fiber.parent)
     while (!domParentFiber.dom) {
       domParentFiber = domParentFiber.parent
     }

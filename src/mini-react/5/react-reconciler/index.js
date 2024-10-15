@@ -1,7 +1,6 @@
 import Fiber from './fiber'
 import { EFFECT_TAG } from '../constants'
 import Committer from './commit'
-import Hook from './hook'
 
 class Reconciler {
   constructor() {
@@ -10,7 +9,6 @@ class Reconciler {
     this.currentRoot = null
     this.deletions = []
     this.committer = new Committer(this)
-    this.hook = new Hook(this)
   }
 
   /**
@@ -147,7 +145,7 @@ class Reconciler {
     
   }
 
-  /**
+/**
  * @function workLoop
  * @description workLoop函数是react reconciler的核心逻辑，
  * 它会在浏览器的空闲时间里执行work，直到nextUnitOfWork为null时
@@ -157,7 +155,6 @@ class Reconciler {
   workLoop(deadline) {
     let shouldYield = false
     while (this.nextUnitOfWork && !shouldYield) {
-      console.log("🚀 ~ Reconciler ~ workLoop ~ nextUnitOfWork:", this.nextUnitOfWork)
       this.nextUnitOfWork = this.performUnitOfWork(this.nextUnitOfWork)
       shouldYield = deadline.timeRemaining() < 1
     }

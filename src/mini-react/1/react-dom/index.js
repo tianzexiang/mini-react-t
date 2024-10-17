@@ -1,4 +1,5 @@
 import { VDOM_TYPE } from '../constants'
+// import { sleep } from '../../../utils'
 
 function createRoot(container) {
   // 返回一个对象，包含render方法
@@ -19,7 +20,7 @@ function createRoot(container) {
         createRoot(dom).render(child)
       )
 
-
+      // await sleep(5000)
       // 将dom节点添加到container中
       container.appendChild(dom)
     }
@@ -33,7 +34,7 @@ function createElement(type, props, ...children) {
     props: {
         ...props,
         children: children.map(child =>
-            typeof child === 'string' ? createTextElement(child) : child
+            typeof child === 'string' || typeof child === 'number' ? createTextElement(child) : child
         )
     }
   }
@@ -52,6 +53,6 @@ function createTextElement(text) {
 
 export {
   createRoot,
-  createElement,
+  createElement
 }
 

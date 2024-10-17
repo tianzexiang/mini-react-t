@@ -27,7 +27,7 @@ function createElement(type, props, ...children) {
     props: {
       ...props,
       children: children.map(child =>
-        typeof child === 'string' ? createTextElement(child) : child
+        typeof child === 'string' || typeof child === 'number' ? createTextElement(child) : child
       )
     }
   }

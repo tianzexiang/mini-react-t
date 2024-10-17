@@ -157,6 +157,7 @@ class Reconciler {
   workLoop(deadline) {
     let shouldYield = false
     while (this.nextUnitOfWork && !shouldYield) {
+      console.log("🚀 ~ Reconciler ~ workLoop ~ this.nextUnitOfWork:", this.nextUnitOfWork)
       this.nextUnitOfWork = this.performUnitOfWork(this.nextUnitOfWork)
       shouldYield = deadline.timeRemaining() < 1
     }

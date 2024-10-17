@@ -20,6 +20,7 @@ class Reconciler {
   performUnitOfWork(fiber) {  
     // 创建子fiber
     const elements = fiber.getChildren()
+    let preSibling
     elements.forEach((childElement, index) => {
       const childFiber = new Fiber({
         type: childElement.type,
@@ -27,7 +28,6 @@ class Reconciler {
         parent: fiber,
         dom: null
       })
-      let preSibling
       if (index === 0) {
         // 第一个子fiber，直接设置为fiber的child
         // root fiber不存在兄弟fiber

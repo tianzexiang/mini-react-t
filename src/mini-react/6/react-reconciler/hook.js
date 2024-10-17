@@ -26,6 +26,7 @@ class Hook {
     wipFiber.hooks[wipFiber.hooksIndex++] = hook
 
     const setState = action => {
+      console.log("🚀 ~ Hook ~ setState ~ setState:")
       hook.queue.push(action)
       this.reconciler.scheduleWork(new Fiber({
         dom: this.reconciler.currentRoot.dom,

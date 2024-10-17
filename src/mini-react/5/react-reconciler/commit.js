@@ -50,8 +50,9 @@ class Committer {
   commitDeletion(fiber, domParent) {
     if (fiber.dom) {
       domParent.removeChild(fiber.dom)
+    } else {
+      this.commitDeletion(fiber.child, domParent)
     }
-    this.commitDeletion(fiber.child, domParent)
   }
 }
 
